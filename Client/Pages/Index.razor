@@ -1,3 +1,158 @@
-﻿@page "/"
+﻿@using System.Text.Json.Serialization
+@inject IHttpClientFactory ClientFactory
+@page "/"
 
-<h1>Hello, world!</h1>
+<h1>Test Results Analysis</h1>
+
+@if (isLoading)
+{
+    <RadzenProgressBarCircular ShowValue="true" Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
+        <Template>Processing Data, Please Wait...</Template>
+    </RadzenProgressBarCircular>
+}
+else
+{
+    <div Class="rz-p-0 rz-p-md-12">
+        <RadzenCard>
+            <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H3">JSON Data Input</RadzenText>
+            <RadzenTextArea @bind-Value=@jsonData Cols="200" Rows="10" Style="resize:none" />
+            <MudSpacer />
+            <RadzenButton Text="Generate Demo Data" Click=@(args => GenerateDemoData())></RadzenButton>
+            <RadzenButton Text="Process Data" Click=@(args => ProcessJsonData())></RadzenButton>
+        </RadzenCard>
+    </div>
+
+    <div Class="rz-p-0 rz-p-md-12">
+        <RadzenCard>
+            <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H3">Test Cases by Status</RadzenText>
+            <RadzenChart>
+                <RadzenColumnSeries Data="@columnsData.ToArray()" CategoryProperty="Status" ValueProperty="Count" Fills=@(new [] { "#ff0000", "#00ff00", "#0000ff", "#808080" })>
+                    <TooltipTemplate Context="data">
+                        <div>
+                            Test Cases with Status <span>@data.Status</span>:
+                            <strong>@data.Count</strong>
+                        </div>
+                    </TooltipTemplate>
+                </RadzenColumnSeries>
+            </RadzenChart>
+        </RadzenCard>
+    </div>
+
+    <div class="col-sm-12 col-lg-6 offset-lg-3 my-5">
+        <RadzenCard>
+            <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H3">Test Cases Rates by Status</RadzenText>
+            <RadzenChart>
+                <RadzenDonutSeries Data="@donutData.ToArray()" CategoryProperty="Status" ValueProperty="Count" Fills=@(new [] { "#ff0000", "#00ff00", "#0000ff", "#808080" }) TotalAngle="180" StartAngle="180">
+                    <TitleTemplate>
+                        <div class="rz-donut-content">
+                            <div>Test Cases</div>
+                            <div>by Results</div>
+                        </div>
+                    </TitleTemplate>
+                </RadzenDonutSeries>
+            </RadzenChart>
+        </RadzenCard>
+    </div>
+
+    <div Class="rz-p-0 rz-p-md-12">
+        <RadzenCard>
+            <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H3">Execution Times</RadzenText>
+            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>Execution Time in Milliseconds: </b>@analysisResult.ExecutionTimeMS</RadzenText>
+            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>Shortest Execution Time in Milliseconds: </b>@analysisResult.ShortestExecutionTimeMS</RadzenText>
+            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>Longest Execution Time in Milliseconds: </b>@analysisResult.LongestExecutionTimeMS</RadzenText>
+            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>Average Execution Time in Milliseconds: </b>@analysisResult.AverageExecutionTimeMS</RadzenText>
+        </RadzenCard>
+        <RadzenCard>
+            <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H3">Elements Count</RadzenText>
+            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>Total Executions: </b>@analysisResult.TotalExecutions</RadzenText>
+            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>Total Test Suites: </b>@analysisResult.TotalTestSuites</RadzenText>
+            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>Total Test Cases: </b>@analysisResult.TotalTestCases</RadzenText>
+        </RadzenCard>
+        <RadzenCard>
+            <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H3">Tests Count by Status</RadzenText>
+            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>Failing Test Cases: </b>@analysisResult.FailingTestCases</RadzenText>
+            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>Passing Test Cases: </b>@analysisResult.PassingTestCases</RadzenText>
+            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>Pending Test Cases: </b>@analysisResult.PendingTestCases</RadzenText>
+            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>Skipping Test Cases: </b>@analysisResult.SkippingTestCases</RadzenText>
+        </RadzenCard>
+        <RadzenCard>
+            <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H3">Tests Rate by Status</RadzenText>
+            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>Failing Test Rate: </b>@(analysisResult.FailingRate * 100) %</RadzenText>
+            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>Passing Test Rate: </b>@(analysisResult.PassingRate * 100) %</RadzenText>
+            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>Pending Test Rate: </b>@(analysisResult.PendingRate * 100) %</RadzenText>
+            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>Skipping Test Rate: </b>@(analysisResult.SkippingRate * 100) %</RadzenText>
+        </RadzenCard>
+        <RadzenCard>
+            <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H3">Failed Tests</RadzenText>
+            @foreach (String failedTest in analysisResult.FailedTests)
+            {
+                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">@failedTest</RadzenText>
+            }
+        </RadzenCard>
+    </div>
+}
+
+@code {
+    class DataItem
+    {
+        public string Status { get; set; }
+        public double Count { get; set; }
+    }
+
+    AnalysisResult analysisResult = new AnalysisResult();
+
+    List<DataItem> columnsData = new();
+    List<DataItem> donutData = new();
+
+    private string jsonData;
+    private bool isLoading = false;
+
+    async void GenerateDemoData()
+    {
+        HttpClient client = ClientFactory.CreateClient();
+        var response = await client.GetFromJsonAsync<List<TestExecution>>("https://localhost:7188/api/TestExecutions");
+
+        if (response != null)
+        {
+            jsonData = Newtonsoft.Json.JsonConvert.SerializeObject(response, Newtonsoft.Json.Formatting.Indented);
+
+            StateHasChanged();
+        }
+    }
+
+    async void ProcessJsonData()
+    {
+        if (String.IsNullOrEmpty(jsonData))
+        {
+            return;
+        }
+
+        List<TestExecution> testExecutions = Newtonsoft.Json.JsonConvert.DeserializeObject<List<TestExecution>>(jsonData);
+
+        HttpClient client = ClientFactory.CreateClient();
+        var response = await client.PostAsJsonAsync<List<TestExecution>>("https://localhost:7188/api/Analysis/TestExecutions", testExecutions);
+
+        if (response.IsSuccessStatusCode)
+        {
+            string responseString = await response.Content.ReadAsStringAsync();
+            AnalysisResult responseContent = Newtonsoft.Json.JsonConvert.DeserializeObject<AnalysisResult>(responseString);
+
+            analysisResult = (responseContent != null) ? responseContent : analysisResult;
+
+            columnsData.Clear();
+            donutData.Clear();
+
+            columnsData.Add(new DataItem() { Count = analysisResult.FailingTestCases, Status = "Failed" });
+            columnsData.Add(new DataItem() { Count = analysisResult.PassingTestCases, Status = "Passed" });
+            columnsData.Add(new DataItem() { Count = analysisResult.PendingTestCases, Status = "Pending" });
+            columnsData.Add(new DataItem() { Count = analysisResult.SkippingTestCases, Status = "Skipped" });
+
+            donutData.Add(new DataItem() { Count = analysisResult.FailingRate * 100, Status = "Failed" });
+            donutData.Add(new DataItem() { Count = analysisResult.PassingRate * 100, Status = "Passed" });
+            donutData.Add(new DataItem() { Count = analysisResult.PendingRate * 100, Status = "Pending" });
+            donutData.Add(new DataItem() { Count = analysisResult.SkippingRate * 100, Status = "Skipped" });
+
+            StateHasChanged();
+        }
+    }
+}

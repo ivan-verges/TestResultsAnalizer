@@ -8,13 +8,13 @@ namespace TestResultsAnalyzer.Server.Controllers
     [ApiController]
     public class TestExecutionsController : ControllerBase
     {
-        //Simulate Database Context Object
-        private readonly List<TestExecution> testExecutions = new DemoGenerator().GenerateTestExecutions(4, 4, 4);
-
         // GET: api/<TestExecutionsController>
         [HttpGet]
         public IEnumerable<TestExecution> Get()
         {
+            Random random = new();
+            List<TestExecution> testExecutions = new DemoGenerator().GenerateTestExecutions(random.Next(1, 10), random.Next(1, 10), random.Next(1, 10));
+
             return testExecutions;
         }
 
@@ -22,30 +22,10 @@ namespace TestResultsAnalyzer.Server.Controllers
         [HttpGet("{id}")]
         public TestExecution Get(int id)
         {
+            Random random = new();
+            List<TestExecution> testExecutions = new DemoGenerator().GenerateTestExecutions(random.Next(1, 10), random.Next(1, 10), random.Next(1, 10));
+
             return testExecutions.First(x => x.Id == id);
-        }
-
-        // POST api/<TestExecutionsController>
-        [HttpPost]
-        public void Post([FromBody] TestExecution value)
-        {
-            testExecutions.Add(value);
-        }
-
-        // PUT api/<TestExecutionsController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] TestExecution value)
-        {
-            TestExecution testExecution = testExecutions.First(x => x.Id == id);
-            testExecution.TestSuites = value.TestSuites;
-        }
-
-        // DELETE api/<TestExecutionsController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-            TestExecution testExecution = testExecutions.First(x => x.Id == id);
-            testExecutions.Remove(testExecution);
         }
     }
 }
