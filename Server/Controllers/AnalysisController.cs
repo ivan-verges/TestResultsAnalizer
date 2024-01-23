@@ -9,13 +9,6 @@ namespace TestResultsAnalyzer.Server.Controllers
     public class AnalysisController : ControllerBase
     {
         // POST api/<AnalysisController>
-        [HttpPost("TestExecution")]
-        public AnalysisResult AnalyzeTestExecution([FromBody] TestExecution value)
-        {
-            return new ResultsAnalyzer().AnalyzeTestExecution(value);
-        }
-
-        // POST api/<AnalysisController>
         [HttpPost("TestExecutions")]
         public AnalysisResult AnalyzeTestExecutions([FromBody] List<TestExecution> value)
         {

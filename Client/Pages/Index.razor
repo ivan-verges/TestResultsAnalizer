@@ -1,32 +1,28 @@
-﻿@using System.Text.Json.Serialization
-@inject IHttpClientFactory ClientFactory
+﻿@inject IHttpClientFactory ClientFactory
+@inject IJSRuntime js
+
 @page "/"
 
 <h1>Test Results Analysis</h1>
 
-@if (isLoading)
-{
-    <RadzenProgressBarCircular ShowValue="true" Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
-        <Template>Processing Data, Please Wait...</Template>
-    </RadzenProgressBarCircular>
-}
-else
-{
-    <div Class="rz-p-0 rz-p-md-12">
-        <RadzenCard>
-            <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H3">JSON Data Input</RadzenText>
-            <RadzenTextArea @bind-Value=@jsonData Cols="200" Rows="10" Style="resize:none" />
-            <MudSpacer />
-            <RadzenButton Text="Generate Demo Data" Click=@(args => GenerateDemoData())></RadzenButton>
-            <RadzenButton Text="Process Data" Click=@(args => ProcessJsonData())></RadzenButton>
-        </RadzenCard>
-    </div>
+<div Class="rz-p-0 rz-p-md-12">
+    <RadzenCard>
+        <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H3">JSON Data Input</RadzenText>
+        <RadzenTextArea @bind-Value=@jsonData Cols="200" Rows="10" Style="resize:none" />
+        <MudSpacer />
+        <MudButton Variant="MudBlazor.Variant.Filled" OnClick="@(() => GenerateDemoData())">Generate Demo JSON</MudButton>
+        <MudButton Variant="MudBlazor.Variant.Filled" OnClick="@(() => ProcessJsonData())">Analyze JSON Data</MudButton>
+        <MudButton StartIcon="@Icons.Custom.FileFormats.FileCode" Variant="MudBlazor.Variant.Filled" OnClick="@(() => DownloadFile())">Download CSV File</MudButton>
+    </RadzenCard>
+</div>
 
+@if (testCasesByResult.Count > 0 || testRatesByResult.Count > 0)
+{
     <div Class="rz-p-0 rz-p-md-12">
         <RadzenCard>
             <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H3">Test Cases by Status</RadzenText>
             <RadzenChart>
-                <RadzenColumnSeries Data="@columnsData.ToArray()" CategoryProperty="Status" ValueProperty="Count" Fills=@(new [] { "#ff0000", "#00ff00", "#0000ff", "#808080" })>
+                <RadzenColumnSeries Data="@testCasesByResult.ToArray()" CategoryProperty="Status" ValueProperty="Count" Fills=@(GetFillColor(testRatesByResult))>
                     <TooltipTemplate Context="data">
                         <div>
                             Test Cases with Status <span>@data.Status</span>:
@@ -42,11 +38,59 @@ else
         <RadzenCard>
             <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H3">Test Cases Rates by Status</RadzenText>
             <RadzenChart>
-                <RadzenDonutSeries Data="@donutData.ToArray()" CategoryProperty="Status" ValueProperty="Count" Fills=@(new [] { "#ff0000", "#00ff00", "#0000ff", "#808080" }) TotalAngle="180" StartAngle="180">
+                <RadzenDonutSeries Data="@testRatesByResult.ToArray()" CategoryProperty="Status" ValueProperty="Count" Fills=@(GetFillColor(testRatesByResult)) TotalAngle="180" StartAngle="180">
                     <TitleTemplate>
                         <div class="rz-donut-content">
                             <div>Test Cases</div>
                             <div>by Results</div>
+                        </div>
+                    </TitleTemplate>
+                </RadzenDonutSeries>
+            </RadzenChart>
+        </RadzenCard>
+    </div>
+
+    <div class="col-sm-12 col-lg-6 offset-lg-3 my-5">
+        <RadzenCard>
+            <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H3">Total Time by Test Plan</RadzenText>
+            <RadzenChart>
+                <RadzenDonutSeries Data="@durationByTestExecution.ToArray()" CategoryProperty="Status" ValueProperty="Count" TotalAngle="180" StartAngle="180">
+                    <TitleTemplate>
+                        <div class="rz-donut-content">
+                            <div>Execution Time</div>
+                            <div>by Test Plan</div>
+                        </div>
+                    </TitleTemplate>
+                </RadzenDonutSeries>
+            </RadzenChart>
+        </RadzenCard>
+    </div>
+
+    <div class="col-sm-12 col-lg-6 offset-lg-3 my-5">
+        <RadzenCard>
+            <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H3">Total Time by Test Suite</RadzenText>
+            <RadzenChart>
+                <RadzenDonutSeries Data="@durationByTestSuite.ToArray()" CategoryProperty="Status" ValueProperty="Count" TotalAngle="180" StartAngle="180">
+                    <TitleTemplate>
+                        <div class="rz-donut-content">
+                            <div>Execution Time</div>
+                            <div>by Test Suite</div>
+                        </div>
+                    </TitleTemplate>
+                </RadzenDonutSeries>
+            </RadzenChart>
+        </RadzenCard>
+    </div>
+
+    <div class="col-sm-12 col-lg-6 offset-lg-3 my-5">
+        <RadzenCard>
+            <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H3">Total Time by Test Case</RadzenText>
+            <RadzenChart>
+                <RadzenDonutSeries Data="@durationByTestCase.ToArray()" CategoryProperty="Status" ValueProperty="Count" TotalAngle="180" StartAngle="180">
+                    <TitleTemplate>
+                        <div class="rz-donut-content">
+                            <div>Execution Time</div>
+                            <div>by Test Case</div>
                         </div>
                     </TitleTemplate>
                 </RadzenDonutSeries>
@@ -101,16 +145,18 @@ else
 
     AnalysisResult analysisResult = new AnalysisResult();
 
-    List<DataItem> columnsData = new();
-    List<DataItem> donutData = new();
+    List<DataItem> durationByTestExecution = new();
+    List<DataItem> durationByTestSuite = new();
+    List<DataItem> durationByTestCase = new();
+    List<DataItem> testCasesByResult = new();
+    List<DataItem> testRatesByResult = new();
 
     private string jsonData;
-    private bool isLoading = false;
 
     async void GenerateDemoData()
     {
         HttpClient client = ClientFactory.CreateClient();
-        var response = await client.GetFromJsonAsync<List<TestExecution>>("https://localhost:7188/api/TestExecutions");
+        List<TestExecution> response = await client.GetFromJsonAsync<List<TestExecution>>("https://localhost:5005/api/TestExecutions");
 
         if (response != null)
         {
@@ -118,6 +164,40 @@ else
 
             StateHasChanged();
         }
+    }
+
+    string[] GetFillColor(List<DataItem> dataItems)
+    {
+        List<string> colors = new();
+
+        dataItems.ForEach(x =>
+        {
+            switch (x.Status)
+            {
+                case "Failed":
+                {
+                    colors.Add("#ff0000");
+                    break;
+                }
+                case "Passed":
+                {
+                    colors.Add("#00ff00");
+                    break;
+                }
+                case "Pending":
+                {
+                    colors.Add("#0000ff");
+                    break;
+                }
+                case "Skipped":
+                {
+                    colors.Add("#808080");
+                    break;
+                }
+            }
+        });
+
+        return colors.ToArray();
     }
 
     async void ProcessJsonData()
@@ -130,7 +210,7 @@ else
         List<TestExecution> testExecutions = Newtonsoft.Json.JsonConvert.DeserializeObject<List<TestExecution>>(jsonData);
 
         HttpClient client = ClientFactory.CreateClient();
-        var response = await client.PostAsJsonAsync<List<TestExecution>>("https://localhost:7188/api/Analysis/TestExecutions", testExecutions);
+        HttpResponseMessage response = await client.PostAsJsonAsync<List<TestExecution>>("https://localhost:5005/api/Analysis/TestExecutions", testExecutions);
 
         if (response.IsSuccessStatusCode)
         {
@@ -139,20 +219,58 @@ else
 
             analysisResult = (responseContent != null) ? responseContent : analysisResult;
 
-            columnsData.Clear();
-            donutData.Clear();
+            durationByTestExecution.Clear();
+            durationByTestSuite.Clear();
+            durationByTestCase.Clear();
+            testCasesByResult.Clear();
+            testRatesByResult.Clear();
 
-            columnsData.Add(new DataItem() { Count = analysisResult.FailingTestCases, Status = "Failed" });
-            columnsData.Add(new DataItem() { Count = analysisResult.PassingTestCases, Status = "Passed" });
-            columnsData.Add(new DataItem() { Count = analysisResult.PendingTestCases, Status = "Pending" });
-            columnsData.Add(new DataItem() { Count = analysisResult.SkippingTestCases, Status = "Skipped" });
+            foreach (KeyValuePair<string, long> entry in analysisResult.TotalTimeByTestExecution)
+            {
+                durationByTestExecution.Add(new DataItem() { Count = entry.Value, Status = entry.Key });
+            }
 
-            donutData.Add(new DataItem() { Count = analysisResult.FailingRate * 100, Status = "Failed" });
-            donutData.Add(new DataItem() { Count = analysisResult.PassingRate * 100, Status = "Passed" });
-            donutData.Add(new DataItem() { Count = analysisResult.PendingRate * 100, Status = "Pending" });
-            donutData.Add(new DataItem() { Count = analysisResult.SkippingRate * 100, Status = "Skipped" });
+            foreach (KeyValuePair<string, long> entry in analysisResult.TotalTimeByTestSuite)
+            {
+                durationByTestSuite.Add(new DataItem() { Count = entry.Value, Status = entry.Key });
+            }
+
+            foreach (KeyValuePair<string, long> entry in analysisResult.TotalTimeByTestCase)
+            {
+                durationByTestCase.Add(new DataItem() { Count = entry.Value, Status = entry.Key });
+            }
+
+            foreach (KeyValuePair<string, int> entry in analysisResult.TestCasesByResult)
+            {
+                testCasesByResult.Add(new DataItem() { Count = entry.Value, Status = entry.Key });
+            }
+
+            foreach (KeyValuePair<string, float> entry in analysisResult.TestRatesByResults)
+            {
+                testRatesByResult.Add(new DataItem() { Count = entry.Value, Status = entry.Key });
+            }
 
             StateHasChanged();
+        }
+    }
+
+    private async Task DownloadFile()
+    {
+        if (string.IsNullOrEmpty(jsonData))
+        {
+            return;
+        }
+
+        HttpClient client = ClientFactory.CreateClient();
+        StringContent stringContent = new StringContent(jsonData, System.Text.Encoding.UTF8, "application/json");
+        HttpResponseMessage response = await client.PostAsync("https://localhost:5005/api/DownloadCsv", stringContent);
+
+        if (response != null)
+        {
+            string csvConvent = await response.Content.ReadAsStringAsync();
+            string fileName = $"{"Test Executions - " + DateTime.Now.ToString("yyyyMMdd", System.Globalization.CultureInfo.InvariantCulture)}.csv";
+
+            await js.InvokeAsync<object>("window.saveAsFile", fileName, Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(csvConvent)));
         }
     }
 }

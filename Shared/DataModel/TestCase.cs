@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json.Converters;
+using System.Text.Json.Serialization;
 
 namespace TestResultsAnalyzer.Shared.DataModel
 {
@@ -12,15 +13,8 @@ namespace TestResultsAnalyzer.Shared.DataModel
         public DateTime StartTime { get; set; }
         [JsonPropertyName("EndTime")]
         public DateTime EndTime { get; set; }
-        [JsonIgnore]
-        public long DurationMS
-        {
-            get
-            {
-                return (EndTime - StartTime).Milliseconds;
-            }
-        }
         [JsonPropertyName("Result")]
+        [Newtonsoft.Json.JsonConverter(typeof(StringEnumConverter))]
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public TestResult Result { get; set; }
     }

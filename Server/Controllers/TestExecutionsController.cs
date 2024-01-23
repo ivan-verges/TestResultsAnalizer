@@ -17,15 +17,5 @@ namespace TestResultsAnalyzer.Server.Controllers
 
             return testExecutions;
         }
-
-        // GET api/<TestExecutionsController>/5
-        [HttpGet("{id}")]
-        public TestExecution Get(int id)
-        {
-            Random random = new();
-            List<TestExecution> testExecutions = new DemoGenerator().GenerateTestExecutions(random.Next(1, 10), random.Next(1, 10), random.Next(1, 10));
-
-            return testExecutions.First(x => x.Id == id);
-        }
     }
 }

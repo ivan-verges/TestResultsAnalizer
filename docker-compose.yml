@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  testresultsanalyzer.server:
+    image: ${DOCKER_REGISTRY-}testresultsanalyzerserver
+    build:
+      context: .
+      dockerfile: Server/Dockerfile
+    ports:
+      - 80:80
+      - 443:443
+      - 5001:5001
+      - 5002:5002
+      - 5003:5003
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    volumes:
+      - ~/.vsdbg:/remote_debugger:rw
+  testresultsanalyzer.client:
+    image: ${DOCKER_REGISTRY-}testresultsanalyzerclient
+    build:
+      context: .
+      dockerfile: Client/Dockerfile
+    ports:
+      - 5004:5004
+      - 5005:5005
+      - 5006:5006
+      - 8080:80
+    depends_on:
+      - testresultsanalyzer.server

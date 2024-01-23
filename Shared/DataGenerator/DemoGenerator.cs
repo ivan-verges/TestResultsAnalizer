@@ -1,4 +1,5 @@
-﻿using TestResultsAnalyzer.Shared.DataModel;
+﻿using System;
+using TestResultsAnalyzer.Shared.DataModel;
 
 namespace TestResultsAnalyzer.Shared.DataGenerator
 {
@@ -9,7 +10,13 @@ namespace TestResultsAnalyzer.Shared.DataGenerator
             List<TestExecution> testExecutions = new();
             for (int testExecutionId = 0; testExecutionId < testExecutionsCount; testExecutionId++)
             {
-                TestExecution testExecution = new() { Id = (testExecutionId + 1), Name = $"Test Execution {(testExecutionId + 1)}", TestSuites = GenerateTestSuites(testSuitesCount, testCasesCount) };
+                TestExecution testExecution = new()
+                {
+                    Id = (testExecutionId + 1),
+                    Name = $"Test Execution {(testExecutionId + 1)}",
+                    TestSuites = GenerateTestSuites(testSuitesCount, testCasesCount)
+                };
+
                 testExecutions.Add(testExecution);
             }
 
@@ -21,7 +28,13 @@ namespace TestResultsAnalyzer.Shared.DataGenerator
             List<TestSuite> testSuites = new();
             for (int testSuiteId = 0; testSuiteId < testSuitesCount; testSuiteId++)
             {
-                TestSuite testSuite = new() { Id = (testSuiteId + 1), Name = $"Test Suite {(testSuiteId + 1)}", TestCases = GenerateTestCases(testCasesCount) };
+                TestSuite testSuite = new()
+                {
+                    Id = (testSuiteId + 1),
+                    Name = $"Test Suite {(testSuiteId + 1)}",
+                    TestCases = GenerateTestCases(testCasesCount)
+                };
+
                 testSuites.Add(testSuite);
             }
 
@@ -33,37 +46,29 @@ namespace TestResultsAnalyzer.Shared.DataGenerator
             List<TestCase> testCases = new();
             for (int testCaseId = 0; testCaseId < testCasesCount; testCaseId++)
             {
-                Random random = new Random();
+                Random random = new();
                 DateTime currentDateTime = DateTime.Now;
-                TestCase testCase = new() { Id = (testCaseId + 1), Name = $"Test Case {(testCaseId + 1)}", EndTime = currentDateTime.AddTicks(random.NextInt64(5000000, 50000000)), StartTime = currentDateTime };
-                switch (testCaseId % 4)
+                TestCase testCase = new()
                 {
-                    case 0:
-                    {
-                        testCase.Result = TestResult.Failed;
-                        break;
-                    }
-                    case 1:
-                    {
-                        testCase.Result = TestResult.Passed;
-                        break;
-                    }
-                    case 2:
-                    {
-                        testCase.Result = TestResult.Pending;
-                        break;
-                    }
-                    case 3:
-                    {
-                        testCase.Result = TestResult.Skipped;
-                        break;
-                    }
-                }
+                    Id = (testCaseId + 1),
+                    Name = $"Test Case {(testCaseId + 1)}",
+                    EndTime = currentDateTime.AddTicks(random.NextInt64(5000000, 50000000)),
+                    Result = GetRandomTestResult(),
+                    StartTime = currentDateTime
+                };
 
                 testCases.Add(testCase);
             }
 
             return testCases;
+        }
+
+        public TestResult GetRandomTestResult()
+        {
+            Random random = new();
+            Array statuses = Enum.GetValues(typeof(TestResult));
+            
+            return (TestResult) statuses.GetValue(random.Next(statuses.Length));
         }
     }
 }
