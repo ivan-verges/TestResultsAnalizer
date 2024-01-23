@@ -1,7 +1,7 @@
 ﻿using System;
 using TestResultsAnalyzer.Shared.DataModel;
 
-namespace TestResultsAnalyzer.Shared.DataGenerator
+namespace TestResultsAnalyzer.Shared.DataGenerators
 {
     public class DemoGenerator
     {
@@ -13,7 +13,7 @@ namespace TestResultsAnalyzer.Shared.DataGenerator
                 TestExecution testExecution = new()
                 {
                     Id = (testExecutionId + 1),
-                    Name = $"Test Execution {(testExecutionId + 1)}",
+                    Name = $"Test Execution {Guid.NewGuid()}",
                     TestSuites = GenerateTestSuites(testSuitesCount, testCasesCount)
                 };
 
@@ -31,7 +31,7 @@ namespace TestResultsAnalyzer.Shared.DataGenerator
                 TestSuite testSuite = new()
                 {
                     Id = (testSuiteId + 1),
-                    Name = $"Test Suite {(testSuiteId + 1)}",
+                    Name = $"Test Suite {Guid.NewGuid()}",
                     TestCases = GenerateTestCases(testCasesCount)
                 };
 
@@ -51,7 +51,7 @@ namespace TestResultsAnalyzer.Shared.DataGenerator
                 TestCase testCase = new()
                 {
                     Id = (testCaseId + 1),
-                    Name = $"Test Case {(testCaseId + 1)}",
+                    Name = $"Test Case {Guid.NewGuid()}",
                     EndTime = currentDateTime.AddTicks(random.NextInt64(5000000, 50000000)),
                     Result = GetRandomTestResult(),
                     StartTime = currentDateTime

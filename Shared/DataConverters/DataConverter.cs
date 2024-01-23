@@ -1,10 +1,28 @@
-﻿using System.Text;
+﻿using Newtonsoft.Json;
+using System.Text;
 using TestResultsAnalyzer.Shared.DataModel;
 
-namespace TestResultsAnalyzer.Shared.BusinessLogic
+namespace TestResultsAnalyzer.Shared.DataConverters
 {
     public class DataConverter
     {
+        public string ObjectToJson<T>(T inputObject)
+        {
+            string result = string.Empty;
+
+            if (inputObject != null)
+            {
+                result = JsonConvert.SerializeObject(inputObject, Formatting.Indented);
+            }
+
+            return result;
+        }
+
+        public T JsonToObject<T>(string jsonData)
+        {
+            return JsonConvert.DeserializeObject<T>(jsonData);
+        }
+
         public string TestExecutionsToCsv(List<TestExecution> testExecutions, char separator = ',', bool includeHeader = true)
         {
             List<string> result = new();
@@ -69,7 +87,7 @@ namespace TestResultsAnalyzer.Shared.BusinessLogic
                 }
             }
 
-            return string.Join('\n', result.ToArray());
+            return string.Join(Environment.NewLine, result.ToArray());
         }
     }
 }

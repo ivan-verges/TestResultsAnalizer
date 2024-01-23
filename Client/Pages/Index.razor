@@ -34,7 +34,7 @@
         </RadzenCard>
     </div>
 
-    <div class="col-sm-12 col-lg-6 offset-lg-3 my-5">
+    <div Class="rz-p-0 rz-p-md-12">
         <RadzenCard>
             <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H3">Test Cases Rates by Status</RadzenText>
             <RadzenChart>
@@ -50,15 +50,15 @@
         </RadzenCard>
     </div>
 
-    <div class="col-sm-12 col-lg-6 offset-lg-3 my-5">
+    <div Class="rz-p-0 rz-p-md-12">
         <RadzenCard>
-            <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H3">Total Time by Test Plan</RadzenText>
+            <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H3">Total Time by Test Execution</RadzenText>
             <RadzenChart>
                 <RadzenDonutSeries Data="@durationByTestExecution.ToArray()" CategoryProperty="Status" ValueProperty="Count" TotalAngle="180" StartAngle="180">
                     <TitleTemplate>
                         <div class="rz-donut-content">
                             <div>Execution Time</div>
-                            <div>by Test Plan</div>
+                            <div>by Test Execution</div>
                         </div>
                     </TitleTemplate>
                 </RadzenDonutSeries>
@@ -66,7 +66,7 @@
         </RadzenCard>
     </div>
 
-    <div class="col-sm-12 col-lg-6 offset-lg-3 my-5">
+    <div Class="rz-p-0 rz-p-md-12">
         <RadzenCard>
             <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H3">Total Time by Test Suite</RadzenText>
             <RadzenChart>
@@ -82,7 +82,7 @@
         </RadzenCard>
     </div>
 
-    <div class="col-sm-12 col-lg-6 offset-lg-3 my-5">
+    <div Class="rz-p-0 rz-p-md-12">
         <RadzenCard>
             <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H3">Total Time by Test Case</RadzenText>
             <RadzenChart>
@@ -101,30 +101,30 @@
     <div Class="rz-p-0 rz-p-md-12">
         <RadzenCard>
             <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H3">Execution Times</RadzenText>
-            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>Execution Time in Milliseconds: </b>@analysisResult.ExecutionTimeMS</RadzenText>
+            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>Total Execution Time in Milliseconds: </b>@analysisResult.ExecutionTimeMS</RadzenText>
             <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>Shortest Execution Time in Milliseconds: </b>@analysisResult.ShortestExecutionTimeMS</RadzenText>
             <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>Longest Execution Time in Milliseconds: </b>@analysisResult.LongestExecutionTimeMS</RadzenText>
             <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>Average Execution Time in Milliseconds: </b>@analysisResult.AverageExecutionTimeMS</RadzenText>
         </RadzenCard>
         <RadzenCard>
-            <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H3">Elements Count</RadzenText>
+            <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H3">Count Resume</RadzenText>
             <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>Total Executions: </b>@analysisResult.TotalExecutions</RadzenText>
             <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>Total Test Suites: </b>@analysisResult.TotalTestSuites</RadzenText>
             <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>Total Test Cases: </b>@analysisResult.TotalTestCases</RadzenText>
         </RadzenCard>
         <RadzenCard>
             <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H3">Tests Count by Status</RadzenText>
-            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>Failing Test Cases: </b>@analysisResult.FailingTestCases</RadzenText>
-            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>Passing Test Cases: </b>@analysisResult.PassingTestCases</RadzenText>
-            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>Pending Test Cases: </b>@analysisResult.PendingTestCases</RadzenText>
-            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>Skipping Test Cases: </b>@analysisResult.SkippingTestCases</RadzenText>
+            @foreach (DataItem dataItem in testCasesByResult)
+            {
+                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>@dataItem.Status Test Cases: </b>@dataItem.Count</RadzenText>                
+            }
         </RadzenCard>
         <RadzenCard>
             <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H3">Tests Rate by Status</RadzenText>
-            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>Failing Test Rate: </b>@(analysisResult.FailingRate * 100) %</RadzenText>
-            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>Passing Test Rate: </b>@(analysisResult.PassingRate * 100) %</RadzenText>
-            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>Pending Test Rate: </b>@(analysisResult.PendingRate * 100) %</RadzenText>
-            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>Skipping Test Rate: </b>@(analysisResult.SkippingRate * 100) %</RadzenText>
+            @foreach (DataItem dataItem in testRatesByResult)
+            {
+                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3"><b>@dataItem.Status Test Rate: </b>@(dataItem.Count * 100) %</RadzenText>
+            }
         </RadzenCard>
         <RadzenCard>
             <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H3">Failed Tests</RadzenText>

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Text;
-using TestResultsAnalyzer.Shared.BusinessLogic;
+using TestResultsAnalyzer.Shared.DataConverters;
 using TestResultsAnalyzer.Shared.DataModel;
 
 namespace TestResultsAnalyzer.Server.Controllers

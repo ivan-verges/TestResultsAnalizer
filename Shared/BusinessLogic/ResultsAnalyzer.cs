@@ -45,21 +45,11 @@ namespace TestResultsAnalyzer.Shared.BusinessLogic
             analysisResult.TotalExecutions = analysisResults.Sum(x => x.TotalExecutions);
             analysisResult.TotalTestSuites = analysisResults.Sum(x => x.TotalTestSuites);
             analysisResult.TotalTestCases = analysisResults.Sum(x => x.TotalTestCases);
-            
-            analysisResult.FailingTestCases = analysisResults.Sum(x => x.FailingTestCases);
-            analysisResult.PassingTestCases = analysisResults.Sum(x => x.PassingTestCases);
-            analysisResult.PendingTestCases = analysisResults.Sum(x => x.PendingTestCases);
-            analysisResult.SkippingTestCases = analysisResults.Sum(x => x.SkippingTestCases);
 
             analysisResult.ExecutionTimeMS = analysisResults.Sum(x => x.ExecutionTimeMS);
             analysisResult.ShortestExecutionTimeMS = analysisResults.Min(x => x.ShortestExecutionTimeMS);
             analysisResult.LongestExecutionTimeMS = analysisResults.Min(x => x.LongestExecutionTimeMS);
             analysisResult.AverageExecutionTimeMS = (long) analysisResults.Average(x => x.AverageExecutionTimeMS);
-
-            analysisResult.FailingRate = analysisResults.Average(x => x.FailingRate);
-            analysisResult.PassingRate = analysisResults.Average(x => x.PassingRate);
-            analysisResult.PendingRate = analysisResults.Average(x => x.PendingRate);
-            analysisResult.SkippingRate = analysisResults.Average(x => x.SkippingRate);
 
             analysisResult.FailedTests = new();
             analysisResults.ForEach(x => x.FailedTests.ForEach(y => analysisResult.FailedTests.Add(y)));
@@ -86,11 +76,6 @@ namespace TestResultsAnalyzer.Shared.BusinessLogic
 
                 analysisResult.TotalTestCases += testSuite.TestCases.Count;
 
-                analysisResult.FailingTestCases += testSuite.TestCases.Where(x => x.Result == TestResult.Failed).Count();
-                analysisResult.PassingTestCases += testSuite.TestCases.Where(x => x.Result == TestResult.Passed).Count();
-                analysisResult.PendingTestCases += testSuite.TestCases.Where(x => x.Result == TestResult.Pending).Count();
-                analysisResult.SkippingTestCases += testSuite.TestCases.Where(x => x.Result == TestResult.Skipped).Count();
-
                 long shortestExecutionTime = testSuite.TestCases.Min(x => (long)(x.EndTime - x.StartTime).TotalMilliseconds);
                 long longestExecutionTime = testSuite.TestCases.Max(x => (long)(x.EndTime - x.StartTime).TotalMilliseconds);
                 double averageExecutionTime = testSuite.TestCases.Average(x => (long)(x.EndTime - x.StartTime).TotalMilliseconds);
@@ -112,11 +97,6 @@ namespace TestResultsAnalyzer.Shared.BusinessLogic
                     }
                 }
             }
-
-            analysisResult.FailingRate = (float) Decimal.Divide(analysisResult.FailingTestCases, analysisResult.TotalTestCases);
-            analysisResult.PassingRate = (float) Decimal.Divide(analysisResult.PassingTestCases, analysisResult.TotalTestCases);
-            analysisResult.PendingRate = (float) Decimal.Divide(analysisResult.PendingTestCases, analysisResult.TotalTestCases);
-            analysisResult.SkippingRate = (float) Decimal.Divide(analysisResult.SkippingTestCases, analysisResult.TotalTestCases);
 
             analysisResult.AverageExecutionTimeMS = (analysisResult.ExecutionTimeMS / analysisResult.TotalTestCases);
 

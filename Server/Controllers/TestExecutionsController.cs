@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TestResultsAnalyzer.Shared.DataGenerator;
+using TestResultsAnalyzer.Shared.DataGenerators;
 using TestResultsAnalyzer.Shared.DataModel;
 
 namespace TestResultsAnalyzer.Server.Controllers

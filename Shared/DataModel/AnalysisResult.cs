@@ -11,14 +11,6 @@
         public int TotalExecutions { get; set; }
         public int TotalTestSuites { get; set; }
         public int TotalTestCases { get; set; }
-        public int FailingTestCases { get; set; }
-        public int PassingTestCases { get; set; }
-        public int PendingTestCases { get; set; }
-        public int SkippingTestCases { get; set; }
-        public float FailingRate { get; set; }
-        public float PassingRate { get; set; }
-        public float PendingRate { get; set; }
-        public float SkippingRate { get; set; }
         public long ShortestExecutionTimeMS { get; set; }
         public long LongestExecutionTimeMS { get; set; }
         public long AverageExecutionTimeMS { get; set; }
