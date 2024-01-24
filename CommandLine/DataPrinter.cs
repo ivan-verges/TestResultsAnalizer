@@ -25,17 +25,17 @@ namespace TestResultsAnalyzer.CommandLine
         {
             Console.WriteLine("Counters");
             Console.WriteLine(GetSeparator());
-            Console.WriteLine($"Total Executions: {analysisResult.TotalExecutions}");
-            Console.WriteLine($"Total Test Suites: {analysisResult.TotalTestSuites}");
-            Console.WriteLine($"Total Test Cases: {analysisResult.TotalTestCases}");
+            Console.WriteLine($"\tTotal Executions: {analysisResult.TotalExecutions}");
+            Console.WriteLine($"\tTotal Test Suites: {analysisResult.TotalTestSuites}");
+            Console.WriteLine($"\tTotal Test Cases: {analysisResult.TotalTestCases}");
             Console.WriteLine(GetSeparator(2));
 
             Console.WriteLine("Execution Time");
             Console.WriteLine(GetSeparator());
-            Console.WriteLine($"Total Execution Time (MS): {analysisResult.ExecutionTimeMS}");
-            Console.WriteLine($"Shortest Execution Time (MS): {analysisResult.ShortestExecutionTimeMS}");
-            Console.WriteLine($"Longest Execution Time (MS): {analysisResult.LongestExecutionTimeMS}");
-            Console.WriteLine($"Average Execution Time (MS): {analysisResult.AverageExecutionTimeMS}");
+            Console.WriteLine($"\tTotal Execution Time (MS): {analysisResult.ExecutionTimeMS}");
+            Console.WriteLine($"\tShortest Execution Time (MS): {analysisResult.ShortestExecutionTimeMS}");
+            Console.WriteLine($"\tLongest Execution Time (MS): {analysisResult.LongestExecutionTimeMS}");
+            Console.WriteLine($"\tAverage Execution Time (MS): {analysisResult.AverageExecutionTimeMS}");
             Console.WriteLine(GetSeparator(2));
 
             Console.WriteLine("Test Cases by Status");
