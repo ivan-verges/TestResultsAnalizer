@@ -2,8 +2,7 @@
 
 
 ## 🔗 Links
-[![Personal Page](https://img.shields.io/badge/my_portfolio-000?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ivanverges.com/)
-[![LinkedIn](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/ivan-verges/)
+[![Personal Page](https://img.shields.io/badge/Personal_Page-000?style=for-the-badge)](https://ivanverges.com/)
 
 
 # Test Results Analyzer
@@ -17,10 +16,15 @@ This solution contains 4 projects:
 
 
 ## Tech Stack
+
 **IDE:** Visual Studio 2022
+
 **TestResultsAnalyzer.Client:** .NET 7.0, Blazor, WASM, MudBlazor, Radzen.Blazor
+
 **TestResultsAnalyzer.CommandLine:** .NET 7.0
+
 **TestResultsAnalyzer.Server:** .NET 7.0, Web API
+
 **TestResultsAnalyzer.Shared:** .NET 7.0
 
 
@@ -43,6 +47,79 @@ This is the JSON structure assumed for this project, which is an array of Test E
             "StartTime": "2024-01-24T16:54:21.6917313-04:00",
             "EndTime": "2024-01-24T16:54:26.3242674-04:00",
             "Result": "Failed"
+          },
+          {
+            "Id": 2,
+            "Name": "Test Case Name",
+            "StartTime": "2024-01-24T16:54:21.6917313-04:00",
+            "EndTime": "2024-01-24T16:54:26.3242674-04:00",
+            "Result": "Failed"
+          }
+        ]
+      },
+      {
+        "Id": 2,
+        "Name": "Test Suite Name",
+        "TestCases": [
+          {
+            "Id": 1,
+            "Name": "Test Case Name",
+            "StartTime": "2024-01-24T16:54:21.6917313-04:00",
+            "EndTime": "2024-01-24T16:54:26.3242674-04:00",
+            "Result": "Failed"
+          },
+          {
+            "Id": 2,
+            "Name": "Test Case Name",
+            "StartTime": "2024-01-24T16:54:21.6917313-04:00",
+            "EndTime": "2024-01-24T16:54:26.3242674-04:00",
+            "Result": "Failed"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Id": 2,
+    "Name": "Test Execution Name",
+    "TestSuites": [
+      {
+        "Id": 1,
+        "Name": "Test Suite Name",
+        "TestCases": [
+          {
+            "Id": 1,
+            "Name": "Test Case Name",
+            "StartTime": "2024-01-24T16:54:21.6917313-04:00",
+            "EndTime": "2024-01-24T16:54:26.3242674-04:00",
+            "Result": "Failed"
+          },
+          {
+            "Id": 2,
+            "Name": "Test Case Name",
+            "StartTime": "2024-01-24T16:54:21.6917313-04:00",
+            "EndTime": "2024-01-24T16:54:26.3242674-04:00",
+            "Result": "Failed"
+          }
+        ]
+      },
+      {
+        "Id": 2,
+        "Name": "Test Suite Name",
+        "TestCases": [
+          {
+            "Id": 1,
+            "Name": "Test Case Name",
+            "StartTime": "2024-01-24T16:54:21.6917313-04:00",
+            "EndTime": "2024-01-24T16:54:26.3242674-04:00",
+            "Result": "Failed"
+          },
+          {
+            "Id": 2,
+            "Name": "Test Case Name",
+            "StartTime": "2024-01-24T16:54:21.6917313-04:00",
+            "EndTime": "2024-01-24T16:54:26.3242674-04:00",
+            "Result": "Failed"
           }
         ]
       }
@@ -53,7 +130,7 @@ This is the JSON structure assumed for this project, which is an array of Test E
 
 
 ## Dependencies
-To run this project you need to install the .NET 7.0 SDK, which you can download from here:('https://dotnet.microsoft.com/en-us/download/visual-studio-sdks')
+To run this project you need to install the .NET 7.0 SDK, which you can download from here: https://dotnet.microsoft.com/en-us/download/visual-studio-sdks
 
 
 ## How to run this project
@@ -62,30 +139,72 @@ To run this project you need to install the .NET 7.0 SDK, which you can download
 
 
 ## Screenshots (Console App)
+- App Menu
 ![App Menu](https://github.com/ivan-verges/TestResultsAnalizer/blob/master/Screenshots/CLI01.png?raw=true)
+
+- Generating JSON Data
 ![Generating JSON Data](https://github.com/ivan-verges/TestResultsAnalizer/blob/master/Screenshots/CLI02.png?raw=true)
+
+- View Generated JSON File
 ![View Generated JSON File](https://github.com/ivan-verges/TestResultsAnalizer/blob/master/Screenshots/CLI03.png?raw=true)
+
+- Generating CSV Data
 ![Generating CSV Data](https://github.com/ivan-verges/TestResultsAnalizer/blob/master/Screenshots/CLI04.png?raw=true)
+
+- View Generated CSV File
 ![View Generated CSV File](https://github.com/ivan-verges/TestResultsAnalizer/blob/master/Screenshots/CLI05.png?raw=true)
+
+- Analyzing JSON Data From Console
 ![Analyzing JSON Data From Console](https://github.com/ivan-verges/TestResultsAnalizer/blob/master/Screenshots/CLI06.png?raw=true)
+
+- Showing Analysis Data
 ![Showing Analysis Data](https://github.com/ivan-verges/TestResultsAnalizer/blob/master/Screenshots/CLI07.png?raw=true)
+
+- Analyzing Data From JSON File
 ![Analyzing Data From JSON File](https://github.com/ivan-verges/TestResultsAnalizer/blob/master/Screenshots/CLI08.png?raw=true)
+
+- Showing Analysis Data
 ![Showing Analysis Data](https://github.com/ivan-verges/TestResultsAnalizer/blob/master/Screenshots/CLI09.png?raw=true)
+
+- Exporting Data From JSON to CSV File
 ![Exporting Data From JSON to CSV File](https://github.com/ivan-verges/TestResultsAnalizer/blob/master/Screenshots/CLI10.png?raw=true)
+
+- View Exported CSV File
 ![View Exported CSV File](https://github.com/ivan-verges/TestResultsAnalizer/blob/master/Screenshots/CLI11.png?raw=true)
+
+- Exporting Data From JSON File to CSV File
 ![Exporting Data From JSON File to CSV File](https://github.com/ivan-verges/TestResultsAnalizer/blob/master/Screenshots/CLI12.png?raw=true)
+
+- View Exported CSV File
 ![View Exported CSV File](https://github.com/ivan-verges/TestResultsAnalizer/blob/master/Screenshots/CLI13.png?raw=true)
 
 
 ## Screenshots (Web App)
+- Generate Demo JSON Data
 ![Generate Demo JSON Data](https://github.com/ivan-verges/TestResultsAnalizer/blob/master/Screenshots/Web01.png?raw=true)
+
+- View Analysis Graphs 1
 ![View Analysis Graphs 1](https://github.com/ivan-verges/TestResultsAnalizer/blob/master/Screenshots/Web02.png?raw=true)
+
+- View Analysis Graphs 2
 ![View Analysis Graphs 2](https://github.com/ivan-verges/TestResultsAnalizer/blob/master/Screenshots/Web03.png?raw=true)
+
+- View Analysis Graphs 3
 ![View Analysis Graphs 3](https://github.com/ivan-verges/TestResultsAnalizer/blob/master/Screenshots/Web04.png?raw=true)
+
+- View Analysis Data 1
 ![View Analysis Data 1](https://github.com/ivan-verges/TestResultsAnalizer/blob/master/Screenshots/Web05.png?raw=true)
+
+- View Analysis Data 2
 ![View Analysis Data 2](https://github.com/ivan-verges/TestResultsAnalizer/blob/master/Screenshots/Web06.png?raw=true)
+
+- View CSV File Download
 ![View CSV File Download](https://github.com/ivan-verges/TestResultsAnalizer/blob/master/Screenshots/Web07.png?raw=true)
+
+- View CSV File Content in Excel
 ![View CSV File Content in Excel](https://github.com/ivan-verges/TestResultsAnalizer/blob/master/Screenshots/Web08.png?raw=true)
+
+- View CSV File Content in Notepad++
 ![View CSV File Content in Notepad++](https://github.com/ivan-verges/TestResultsAnalizer/blob/master/Screenshots/Web09.png?raw=true)
 
 
